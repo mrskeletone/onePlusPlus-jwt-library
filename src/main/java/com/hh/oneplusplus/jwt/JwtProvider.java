@@ -1,10 +1,6 @@
 package com.hh.oneplusplus.jwt;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,22 +16,20 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Component
 public class JwtProvider {
 
 
-    @Value("${jwt.access.expire}")
-    private long accessExpire;
-    @Value("${jwt.refresh.expire}")
-    private long refreshExpire;
+    private final long accessExpire;
+    private final long refreshExpire;
     private final SecretKey accessSecretKey;
     private final SecretKey refreshSecretKey;
     private final Logger log = Logger.getLogger(String.valueOf(JwtProvider.class));
 
-    public JwtProvider(@Value("${jwt.access.secret-code}") String accessSecretCode,
-                       @Value("${jwt.refresh.secret-code}") String refreshSecretCode) {
+    public JwtProvider(String accessSecretCode, String refreshSecretCode, long accessExpire, long refreshExpire) {
         this.accessSecretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(accessSecretCode));
         this.refreshSecretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(refreshSecretCode));
+        this.accessExpire = accessExpire;
+        this.refreshExpire = refreshExpire;
     }
 
     public String createAccessToken(Map<String, Object> claims, String email) {
