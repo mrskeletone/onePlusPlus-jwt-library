@@ -3,8 +3,6 @@ package com.hh.oneplusplus.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
@@ -45,7 +43,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String createRefreshToken(Map<String, Object> claims, String email) {
+    public String createRefreshToken(Map<String, Object> claims, String email, String jti) {
         LocalDateTime now = LocalDateTime.now();
         Instant refreshExpirationInstant = now.plusDays(refreshExpire).
                 atZone(ZoneId.systemDefault()).toInstant();
@@ -53,6 +51,7 @@ public class JwtProvider {
         return Jwts.builder()
                 .claims(claims)
                 .subject(email)
+                .id(jti)
                 .expiration(refreshExpiration)
                 .signWith(refreshSecretKey)
                 .compact();
