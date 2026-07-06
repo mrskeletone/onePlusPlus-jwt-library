@@ -13,6 +13,7 @@ import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,7 +46,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String createRefreshToken(Map<String, Object> claims, String email) {
+    public String createRefreshToken(Map<String, Object> claims, String email, String jti) {
         LocalDateTime now = LocalDateTime.now();
         Instant refreshExpirationInstant = now.plusDays(refreshExpire).
                 atZone(ZoneId.systemDefault()).toInstant();
@@ -53,6 +54,7 @@ public class JwtProvider {
         return Jwts.builder()
                 .claims(claims)
                 .subject(email)
+                .id(jti)
                 .expiration(refreshExpiration)
                 .signWith(refreshSecretKey)
                 .compact();
