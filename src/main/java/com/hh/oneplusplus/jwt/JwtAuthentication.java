@@ -4,9 +4,10 @@ import io.jsonwebtoken.Claims;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 public class JwtAuthentication implements Authentication {
     private boolean authenticated;
@@ -14,10 +15,11 @@ public class JwtAuthentication implements Authentication {
     private String name;
     private long userId;
     private String surname;
+    private String role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
     @Override
@@ -78,12 +80,21 @@ public class JwtAuthentication implements Authentication {
         this.email = email;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public static JwtAuthentication generate(Claims claims) {
         JwtAuthentication jwtAuthentication = new JwtAuthentication();
         jwtAuthentication.setEmail(claims.getSubject());
         jwtAuthentication.setName(claims.get("name", String.class));
         jwtAuthentication.setSurname(claims.get("surname", String.class));
         jwtAuthentication.setUserId(claims.get("id", Long.class));
+        jwtAuthentication.setRole(claims.get("role", String.class));
         jwtAuthentication.setAuthenticated(true);
         return jwtAuthentication;
     }
