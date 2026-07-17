@@ -5,7 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -30,6 +29,12 @@ public class JwtFilter extends OncePerRequestFilter {
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             JwtAuthentication jwtAuthentication = JwtAuthentication.generate(jwtProvider.getAccessClaims(token));
+            String status = jwtAuthentication.getStatus();
+            if(status.equals("BANNED")){
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("Account banned");
+                return;
+            }
             SecurityContextHolder.getContext().setAuthentication(jwtAuthentication);
 
         }

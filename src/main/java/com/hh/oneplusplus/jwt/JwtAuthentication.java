@@ -16,6 +16,7 @@ public class JwtAuthentication implements Authentication {
     private long userId;
     private String surname;
     private String role;
+    private String status;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -88,6 +89,14 @@ public class JwtAuthentication implements Authentication {
         this.role = role;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public static JwtAuthentication generate(Claims claims) {
         JwtAuthentication jwtAuthentication = new JwtAuthentication();
         jwtAuthentication.setEmail(claims.getSubject());
@@ -95,6 +104,7 @@ public class JwtAuthentication implements Authentication {
         jwtAuthentication.setSurname(claims.get("surname", String.class));
         jwtAuthentication.setUserId(claims.get("id", Long.class));
         jwtAuthentication.setRole(claims.get("role", String.class));
+        jwtAuthentication.setStatus(claims.get("status", String.class));
         jwtAuthentication.setAuthenticated(true);
         return jwtAuthentication;
     }
