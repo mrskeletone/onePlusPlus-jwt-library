@@ -33,4 +33,8 @@ public class SecurityContextService {
     public String getSurname() {
         return authentication().getSurname();
     }
+
+    public String getRole() {
+        return authentication().getRole();
+    }
 }
